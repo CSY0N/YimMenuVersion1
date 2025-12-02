@@ -1,0 +1,10 @@
+#pragma once
+#include "fwddec.hpp"
+#include "script/dataList.hpp"
+#include "script/scriptIdBase.hpp"
+#include "script/scriptResource.hpp"
+#include "script/scriptHandler.hpp"
+#include "script/scriptHandlerMgr.hpp"
+#include "script/scriptHandlerNetComponent.hpp"
+#include "script/CGameScriptHandler.hpp"
+#include "script/CGameScriptHandlerNetComponent.hpp"
