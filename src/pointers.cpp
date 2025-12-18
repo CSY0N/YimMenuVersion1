@@ -636,7 +636,7 @@ namespace big
                 g_pointers->m_gta.m_script_vm = ptr.add(1).rip().as<functions::script_vm>();
             }
         },
-        // Handle Join Request (partially obfuscated now, crutches deployed)
+        // Handle Join Request
         {
             "HJR",
             "48 81 EC E8 03 00 00 4C 8B F1",
@@ -1960,6 +1960,15 @@ namespace big
             [](memory::handle ptr)
             {
                g_pointers->m_gta.m_anticheat_context = ptr.sub(4).rip().as<CAnticheatContext**>();
+            }
+        },
+        // Game Skeleton Update
+        {
+            "GSU",
+            "40 53 48 83 EC 20 48 8B 81 40 01",
+            [](memory::handle ptr)
+            {
+                g_pointers->m_gta.m_game_skeleton_update = ptr.as<PVOID>();
             }
         }
         >(); // don't leave a trailing comma at the end
