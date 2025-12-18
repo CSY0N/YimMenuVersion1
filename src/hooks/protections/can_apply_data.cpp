@@ -77,10 +77,14 @@ namespace big
 	inline void check_player_model(player_ptr player, uint32_t model)
 	{
 		if (!player)
+		{
 			return;
+		}
 
 		if (NETWORK::NETWORK_IS_ACTIVITY_SESSION())
+		{
 			return;
+		}
 
 		if (!protection::is_valid_player_model(model))
 		{
@@ -92,20 +96,28 @@ namespace big
 	inline CObject* get_entity_attached_to(CObject* entity)
 	{
 		if (!entity)
+		{
 			return nullptr;
+		}
 
 		if (!entity->gap50)
+		{
 			return nullptr;
+		}
 
 		__int64 component = *(__int64*)((__int64)(entity->gap50) + 0x48);
 
 		if (!component)
+		{
 			return nullptr;
+		}
 
 		int unk_count = *(int*)(component + 0x5C) & 0xF;
 
 		if (unk_count < 2)
+		{
 			return nullptr;
+		}
 
 		return *(CObject**)(component);
 	}
@@ -117,15 +129,21 @@ namespace big
 		while (target)
 		{
 			if (target == object)
+			{
 				return true;
+			}
 
 			auto next = get_entity_attached_to(target->GetGameObject());
 
 			if (!next)
+			{
 				return false;
+			}
 
 			if (!next->m_net_object)
+			{
 				return false;
+			}
 
 			target = next->m_net_object;
 		}
@@ -136,14 +154,22 @@ namespace big
 	inline bool is_in_vehicle(CPed* ped, CVehicle* vehicle)
 	{
 		if (!ped || !vehicle)
+		{
 			return false;
+		}
 
 		if (ped == vehicle->m_driver)
+		{
 			return true;
+		}
 
 		for (int i = 0; i < 15; i++)
+		{
 			if (vehicle->m_passengers[i] == ped)
+			{
 				return true;
+			}
+		}
 
 		return false;
 	}
@@ -153,7 +179,9 @@ namespace big
 		for (int i = 0; i < 16; i++)
 		{
 			if (g_local_player && node->m_has_occupants[i] && node->m_occupants[i] == g_local_player->m_net_object->m_object_id)
+			{
 				return true;
+			}
 		}
 
 		return false;
@@ -182,13 +210,19 @@ namespace big
 			}
 
 			if (value.first > type)
+			{
 				break; // a minor optimization
+			}
 		}
 
 		if (buffer.length() > 1)
+		{
 			buffer.pop_back();
+		}
 		else
+		{
 			buffer = "Unknown";
+		}
 
 		buffer += " (" + std::to_string(type) + ")";
 
@@ -200,7 +234,9 @@ namespace big
 		auto info = model_info::get_model(model);
 
 		if (!info)
+		{
 			return std::format("0x{:X}", model);
+		}
 
 		const char* model_str = nullptr;
 
@@ -228,7 +264,9 @@ namespace big
 		}
 
 		if (!model_str)
+		{
 			return std::format("0x{:X}", model);
+		}
 
 		return std::format("{} (0x{:X})", model_str, model);
 	}
@@ -238,10 +276,14 @@ namespace big
 		auto net_obj = g_pointers->m_gta.m_get_net_object(*g_pointers->m_gta.m_network_object_mgr, net_id, false);
 
 		if (!net_obj)
+		{
 			return std::format("{}", net_id);
+		}
 
 		if (auto game_obj = net_obj->GetGameObject(); !game_obj || !game_obj->m_model_info)
+		{
 			return std::format("{} ({})", net_id, net_object_type_strs[net_obj->m_object_type]);
+		}
 
 		return std::format("{} ({}, {})",
 		    net_id,
@@ -254,18 +296,26 @@ namespace big
 		int length = strlen(data);
 
 		if (length <= (system_clan ? 2 : 3))
+		{
 			return false;
+		}
 
 		for (int i = 0; i < length; i++)
 		{
 			if (data[i] >= '0' && data[i] <= '9')
+			{
 				continue;
+			}
 
 			if (data[i] >= 'A' && data[i] <= 'Z')
+			{
 				continue;
+			}
 
 			if (data[i] >= 'a' && data[i] <= 'z')
+			{
 				continue;
+			}
 
 			return false;
 		}
@@ -277,7 +327,9 @@ namespace big
 	inline bool is_valid_interior_game(uint32_t interior_index)
 	{
 		if ((int)(__int64)*(int16_t*)&interior_index >= (int)(*g_pointers->m_gta.m_interior_proxy_pool)->m_size) // this is the bug, should have been an unsigned compare instead
+		{
 			return false;
+		}
 
 		// some more checks that aren't broken
 
@@ -290,7 +342,9 @@ namespace big
 		unsigned __int16 v6; // ax
 
 		if (*a1 == 0xFFFF)
+		{
 			return false;
+		}
 
 		v2 = a1[1];
 		if ((v2 & 1) != 0)
@@ -311,7 +365,9 @@ namespace big
 	inline bool is_valid_interior_fixed(uint32_t interior_index)
 	{
 		if ((uint32_t)(__int64)*(int16_t*)&interior_index >= (uint32_t)(*g_pointers->m_gta.m_interior_proxy_pool)->m_size)
+		{
 			return false;
+		}
 
 		return true;
 	}
@@ -405,13 +461,14 @@ namespace big
 			LOG_FIELD_B(CTrainGameStateDataNode, m_direction);
 			LOG_FIELD_B(CTrainGameStateDataNode, m_has_passenger_carriages);
 			LOG_FIELD_B(CTrainGameStateDataNode, m_render_derailed);
-			LOG_FIELD_B(CTrainGameStateDataNode, unk_00C6);
 			LOG_FIELD_B(CTrainGameStateDataNode, unk_00C7);
+			LOG_FIELD_B(CTrainGameStateDataNode, new_00C8);
 			LOG_FIELD_NI(CTrainGameStateDataNode, m_engine_id);
 			LOG_FIELD_C(CTrainGameStateDataNode, m_train_config_index);
 			LOG_FIELD_C(CTrainGameStateDataNode, m_carriage_config_index);
 			LOG_FIELD_C(CTrainGameStateDataNode, m_track_id);
 			LOG_FIELD(CTrainGameStateDataNode, m_distance_from_engine);
+			LOG_FIELD(CTrainGameStateDataNode, new_00D4);
 			LOG_FIELD(CTrainGameStateDataNode, m_cruise_speed);
 			LOG_FIELD_NI(CTrainGameStateDataNode, m_linked_to_backward_id);
 			LOG_FIELD_NI(CTrainGameStateDataNode, m_linked_to_forward_id);
@@ -1016,7 +1073,9 @@ namespace big
 			LOG_FIELD_B(CVehicleControlDataNode, m_has_suspension_data);
 			LOG_FIELD_B(CVehicleControlDataNode, byteDE);
 			for (int i = 0; i < 10; i++)
+			{
 				LOG_FIELD(CVehicleControlDataNode, m_suspension_heights[i]);
+			}
 			LOG_FIELD_B(CVehicleControlDataNode, byte108);
 			LOG_FIELD_B(CVehicleControlDataNode, byte109);
 			LOG_FIELD_B(CVehicleControlDataNode, byte10A);
@@ -1038,7 +1097,9 @@ namespace big
 			LOG_FIELD_B(CVehicleComponentReservationDataNode, m_has_component_reservations);
 			LOG_FIELD(CVehicleComponentReservationDataNode, m_num_peds_using_component);
 			for (int i = 0; i < ((CVehicleComponentReservationDataNode*)node)->m_num_peds_using_component; i++)
+			{
 				LOG_FIELD_NI(CVehicleComponentReservationDataNode, m_peds_using_component[i]);
+			}
 			break;
 		case sync_node_id("CPlayerAmbientModelStreamingNode"):
 			LOG_FIELD(CPlayerAmbientModelStreamingNode, m_allowed_ped_model_start_offset);
@@ -1100,7 +1161,9 @@ namespace big
 		case eTaskTypeIndex::CTaskAimGun:
 		case eTaskTypeIndex::CTaskAimGunVehicleDriveBy:
 			if (auto ped = (CPed*)object->GetGameObject())
+			{
 				return ped->get_ped_type() == ePedType::PED_TYPE_ANIMAL;
+			}
 
 			break;
 		}
@@ -1145,7 +1208,9 @@ namespace big
 			for (auto child = node->m_first_child; child; child = child->m_next_sibling)
 			{
 				if (get_player_sector_pos(child, x, y, object))
+				{
 					return true;
+				}
 			}
 		}
 		else if (node->IsDataNode())
@@ -1153,7 +1218,9 @@ namespace big
 			const auto& node_id = sync_node_finder::find((eNetObjType)object->m_object_type, (uintptr_t)node);
 
 			if ((((CProjectBaseSyncDataNode*)node)->flags & 1) == 0)
+			{
 				return false;
+			}
 
 			if (node_id == sync_node_id("CPlayerSectorPosNode"))
 			{
@@ -1175,7 +1242,9 @@ namespace big
 			for (auto child = node->m_first_child; child; child = child->m_next_sibling)
 			{
 				if (check_node(child, sender, object))
+				{
 					return true;
+				}
 			}
 		}
 		else if (node->IsDataNode())
@@ -1185,10 +1254,14 @@ namespace big
 			const auto& node_id = sync_node_finder::find((eNetObjType)object->m_object_type, addr);
 
 			if ((((CProjectBaseSyncDataNode*)node)->flags & 1) == 0)
+			{
 				return false;
+			}
 
 			if (g.debug.fuzzer.active && g.debug.fuzzer.enabled || sender_plyr && sender_plyr->log_clones)
+			{
 				log_node(node_id, sender_plyr, (CProjectBaseSyncDataNode*)node, object);
+			}
 
 			switch (node_id)
 			{
@@ -1309,8 +1382,12 @@ namespace big
 				            attach_node->m_attachment_bone)))
 				{
 					if (auto game_object = (CPed*)object->GetGameObject())
+					{
 						if (!game_object->m_player_info)
+						{
 							notify::crash_blocked(sender, "infinite ped attachment"); // parachute false positives
+						}
+					}
 
 					return true;
 				}
@@ -1380,7 +1457,9 @@ namespace big
 				    && is_invalid_override_pos(game_state_node->m_population_control_sphere_x, game_state_node->m_population_control_sphere_y))
 				{
 					if (gta_util::get_network()->m_game_session_ptr->is_host())
+					{
 						notify::crash_blocked(sender, "invalid sector position (player game state node)");
+					}
 
 					return true;
 				}
@@ -1401,26 +1480,36 @@ namespace big
 					if (game_state_node->m_is_spectating)
 					{
 						if (!sender_plyr->get_ped())
+						{
 							break;
+						}
 
 						if (sender_plyr->get_ped()->m_health <= 0.0f) // you spectate the player that killed you
+						{
 							break;
+						}
 
 						auto net_obj =
 						    g_pointers->m_gta.m_get_net_object(*g_pointers->m_gta.m_network_object_mgr, game_state_node->m_spectating_net_id, false);
 
 						if (!net_obj)
+						{
 							break;
+						}
 
 						auto entity = net_obj->GetGameObject();
 
 						if (!entity || entity->m_entity_type != 4)
+						{
 							break;
+						}
 
 						auto player_info = ((CPed*)entity)->m_player_info;
 
 						if (!player_info)
+						{
 							break;
+						}
 
 						player_ptr target = nullptr;
 
@@ -1431,19 +1520,29 @@ namespace big
 						else
 						{
 							for (auto p : g_player_service->players())
+							{
 								if (p.second->get_player_info() == player_info)
+								{
 									target = p.second;
+								}
+							}
 						}
 
 						if (!target || !target->is_valid())
+						{
 							break;
+						}
 
 						if (target->id() != sender_plyr->spectating_player)
 						{
 							if (target->id() == self::id)
+							{
 								g.reactions.spectate.process(sender_plyr);
+							}
 							else
+							{
 								g.reactions.spectate_others.process(sender_plyr, target);
+							}
 
 							sender_plyr->spectating_player = target->id();
 						}
@@ -1601,7 +1700,9 @@ namespace big
 				if (is_invalid_override_pos(camera_node->m_free_cam_pos_x, camera_node->m_free_cam_pos_y))
 				{
 					if (gta_util::get_network()->m_game_session_ptr->is_host())
+					{
 						notify::crash_blocked(sender, "invalid sector position (camera data node)");
+					}
 					return true;
 				}
 
@@ -1696,17 +1797,23 @@ namespace big
 			case sync_node_id("CVehicleScriptGameStateDataNode"):
 			{
 				if (!*reinterpret_cast<bool*>(addr + 0x14A))
+				{
 					break;
+				}
 
 				int16_t parachute_net_id = *reinterpret_cast<int16_t*>(addr + 0x148);
 
 				auto parachute_obj = g_pointers->m_gta.m_get_net_object(*g_pointers->m_gta.m_network_object_mgr, parachute_net_id, true);
 				if (!parachute_obj)
+				{
 					break;
+				}
 
 				auto parachute = parachute_obj->GetGameObject();
 				if (!parachute || !parachute->m_model_info)
+				{
 					break;
+				}
 
 				static const std::unordered_set<uint32_t> vehicle_parachutes = {"imp_prop_impexp_para_s"_J, "sr_prop_specraces_para_s_01"_J, "gr_prop_gr_para_s_01"_J};
 				if (!vehicle_parachutes.contains(parachute->m_model_info->m_hash))
