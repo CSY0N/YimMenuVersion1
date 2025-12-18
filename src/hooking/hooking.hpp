@@ -64,6 +64,7 @@ namespace rage
 	class netSyncDataNode;
 	class rlSessionDetailMsg;
 	class netEvent;
+	struct game_skeleton;
 }
 
 namespace big
