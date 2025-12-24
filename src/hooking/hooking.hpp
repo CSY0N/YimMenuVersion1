@@ -4,9 +4,10 @@
 #include "vmt_hook.hpp"
 #include "vtable_hook.hpp"
 #include "call_hook.hpp"
-
 #include <gta/enums.hpp>
 #include <network/netConnection.hpp> // cannot stub this
+#include "gta_pointers.hpp"
+
 
 class CPlayerGamerDataNode;
 class CPlayerGameStateDataNode;
@@ -220,6 +221,8 @@ namespace big
 		static std::uint32_t get_anticheat_initialized_hash_2(void* ac_var, std::uint32_t seed);
 
 		static void game_skeleton_update(rage::game_skeleton* skeleton, int type);
+		static bool request_story_news_data(CNetworkSCNewsStoryRequest* pStory);
+		
 	};
 
 	class minhook_keepalive
@@ -242,10 +245,9 @@ namespace big
 	public:
 		explicit hooking();
 		~hooking();
-
 		void enable();
 		void disable();
-
+		detour_hook m_request_story_news;
 		class detour_hook_helper
 		{
 			friend hooking;
@@ -302,7 +304,7 @@ namespace big
 		{
 			return detour_hook_helper::hook_to_detour_hook_helper<detour_function>::m_detour_hook.get_original<decltype(detour_function)>();
 		}
-
+		
 	private:
 		bool m_enabled{};
 		minhook_keepalive m_minhook_keepalive;
