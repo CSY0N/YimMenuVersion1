@@ -5,7 +5,7 @@
 #include "script.hpp"
 #include "util/mobile.hpp"
 
-#define MAX_GARAGE_NUM 33
+#define MAX_GARAGE_NUM 36
 
 namespace big
 {
