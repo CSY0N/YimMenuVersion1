@@ -7,6 +7,7 @@
 
 namespace big
 {
+    auto timerStart = std::chrono::system_clock::now();
 	constexpr auto pointers::get_gta_batch()
 	{
 		// clang-format off
@@ -2120,6 +2121,9 @@ namespace big
 		{
 			throw std::runtime_error("Failed to find the game's window.");
 		}
+		auto timerEnd = std::chrono::system_clock::now();
+		auto time = std::chrono::duration<float>(timerEnd - timerStart).count();
+		LOG(INFO) << "Found Signatures In " << time << "s";
 	}
 
 	pointers::~pointers()
